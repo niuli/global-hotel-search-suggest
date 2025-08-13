@@ -1,0 +1,12 @@
+/Users/liniu/hotel-bus/hotel-search/hotel_search/hs-core/src/main/java/com/qunar/hotel/search/core/model/HotelSearchResult.java
+/Users/liniu/hotel-bus/hotel-search/hotel_search/hs-core/src/main/java/com/qunar/hotel/search/core/index/HotelSurface.java
+/Users/liniu/hotel-bus/hotel-search/hotel_search/hs-core/src/main/java/com/qunar/hotel/search/core/utils/StringComputeUtils.java
+/Users/liniu/hotel-bus/hotel-search/hotel_search/hs-core/src/main/java/com/qunar/hotel/search/core/model/HotelSuggestElem.java
+/Users/liniu/hotel-bus/hotel-search/hotel_search/hs-core/src/main/java/com/qunar/hotel/search/core/index/HotelSuggestIndexBuilder.java
+/Users/liniu/hotel-bus/hotel-search/hotel_search/hs-core/src/main/java/com/qunar/hotel/search/core/utils/HotelDataLoader.java
+/Users/liniu/hotel-bus/hotel-search/hotel_search/hs-core/src/main/java/com/qunar/hotel/search/core/index/HotelSuggestIndex.java
+/Users/liniu/hotel-bus/hotel-search/hotel_search/hs-core/src/main/java/com/qunar/hotel/search/core/index/HotelSearchIndex.java
+/Users/liniu/hotel-bus/hotel-search/hotel_search/hs-core/src/main/java/com/qunar/hotel/search/core/index/HotelPrefixIndexBuilder.java
+/Users/liniu/hotel-bus/hotel-search/hotel_search/hs-core/src/main/java/com/qunar/hotel/search/core/index/HotelCandidate.java
+/Users/liniu/hotel-bus/hotel-search/hotel_search/hs-core/src/main/java/com/qunar/hotel/search/core/model/HotelInfo.java
+/Users/liniu/hotel-bus/hotel-search/hotel_search/hs-core/src/main/java/com/qunar/hotel/search/core/normalizer/HotelQueryNormalizer.java

@@ -1,0 +1,14 @@
+com/qunar/hotel/search/core/model/HotelSuggestElem.class
+com/qunar/hotel/search/core/index/HotelSuggestIndex.class
+com/qunar/hotel/search/core/normalizer/HotelQueryNormalizer.class
+com/qunar/hotel/search/core/index/HotelSuggestIndexBuilder.class
+com/qunar/hotel/search/core/index/HotelCandidate.class
+com/qunar/hotel/search/core/model/HotelSearchResult.class
+com/qunar/hotel/search/core/index/HotelSurface.class
+com/qunar/hotel/search/core/index/HotelSearchIndex.class
+com/qunar/hotel/search/core/utils/HotelDataLoader.class
+com/qunar/hotel/search/core/model/HotelInfo.class
+com/qunar/hotel/search/core/index/HotelSuggestIndex$1.class
+com/qunar/hotel/search/core/index/HotelPrefixIndexBuilder.class
+com/qunar/hotel/search/core/index/HotelSuggestIndex$2.class
+com/qunar/hotel/search/core/utils/StringComputeUtils.class

@@ -1,0 +1,651 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>日本酒店搜索系统 - 专项演示</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #ff6b6b 0%, #4ecdc4 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+            overflow: hidden;
+        }
+        
+        .header {
+            background: linear-gradient(135deg, #ff6b6b 0%, #4ecdc4 100%);
+            color: white;
+            padding: 40px;
+            text-align: center;
+        }
+        
+        .header h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+            font-weight: 300;
+        }
+        
+        .header p {
+            font-size: 1.2em;
+            opacity: 0.9;
+        }
+        
+        .content {
+            padding: 40px;
+        }
+        
+        .japan-stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+        
+        .stat-card {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 20px;
+            border-radius: 15px;
+            text-align: center;
+        }
+        
+        .stat-number {
+            font-size: 2em;
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+        
+        .stat-label {
+            font-size: 14px;
+            opacity: 0.9;
+        }
+        
+        .search-section {
+            margin-bottom: 40px;
+            background: #f8f9fa;
+            border-radius: 15px;
+            padding: 30px;
+        }
+        
+        .search-section h2 {
+            color: #333;
+            margin-bottom: 20px;
+            font-size: 1.5em;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .search-box {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+        
+        .search-input {
+            flex: 1;
+            min-width: 300px;
+            padding: 15px 20px;
+            border: 2px solid #e9ecef;
+            border-radius: 10px;
+            font-size: 16px;
+            transition: all 0.3s ease;
+        }
+        
+        .search-input:focus {
+            outline: none;
+            border-color: #ff6b6b;
+            box-shadow: 0 0 0 3px rgba(255, 107, 107, 0.1);
+        }
+        
+        .search-button {
+            padding: 15px 30px;
+            background: linear-gradient(135deg, #ff6b6b 0%, #4ecdc4 100%);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-size: 16px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            white-space: nowrap;
+        }
+        
+        .search-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(255, 107, 107, 0.3);
+        }
+        
+        .quick-search {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 15px;
+            margin-bottom: 30px;
+        }
+        
+        .quick-search-section {
+            background: white;
+            border-radius: 10px;
+            padding: 20px;
+            border: 1px solid #e9ecef;
+        }
+        
+        .quick-search-section h3 {
+            color: #333;
+            margin-bottom: 15px;
+            font-size: 1.1em;
+        }
+        
+        .quick-buttons {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+        
+        .quick-btn {
+            background: #ff6b6b;
+            color: white;
+            border: none;
+            padding: 8px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .quick-btn:hover {
+            background: #ff5252;
+            transform: translateY(-1px);
+        }
+        
+        .results {
+            margin-top: 20px;
+        }
+        
+        .result-item {
+            background: white;
+            border: 1px solid #e9ecef;
+            border-radius: 10px;
+            padding: 20px;
+            margin-bottom: 15px;
+            transition: all 0.3s ease;
+        }
+        
+        .result-item:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+        }
+        
+        .result-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 10px;
+        }
+        
+        .result-title {
+            font-weight: bold;
+            color: #333;
+            font-size: 1.1em;
+        }
+        
+        .result-price {
+            background: #ff6b6b;
+            color: white;
+            padding: 4px 8px;
+            border-radius: 15px;
+            font-size: 12px;
+            font-weight: bold;
+        }
+        
+        .result-details {
+            color: #666;
+            font-size: 14px;
+            line-height: 1.5;
+        }
+        
+        .result-stars {
+            color: #ffd700;
+            font-size: 16px;
+            margin-top: 5px;
+        }
+        
+        .loading {
+            text-align: center;
+            color: #666;
+            font-style: italic;
+            padding: 20px;
+        }
+        
+        .tabs {
+            display: flex;
+            margin-bottom: 20px;
+            border-bottom: 2px solid #e9ecef;
+        }
+        
+        .tab {
+            padding: 15px 30px;
+            background: none;
+            border: none;
+            cursor: pointer;
+            font-size: 16px;
+            color: #666;
+            transition: all 0.3s ease;
+            border-bottom: 3px solid transparent;
+        }
+        
+        .tab.active {
+            color: #ff6b6b;
+            border-bottom-color: #ff6b6b;
+        }
+        
+        .tab-content {
+            display: none;
+        }
+        
+        .tab-content.active {
+            display: block;
+        }
+        
+        .city-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin-top: 20px;
+        }
+        
+        .city-card {
+            background: white;
+            border: 1px solid #e9ecef;
+            border-radius: 10px;
+            padding: 20px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .city-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+            border-color: #ff6b6b;
+        }
+        
+        .city-name {
+            font-size: 1.2em;
+            font-weight: bold;
+            color: #333;
+            margin-bottom: 10px;
+        }
+        
+        .city-info {
+            color: #666;
+            font-size: 14px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🗾 日本酒店搜索系统</h1>
+            <p>专门为日本旅游设计的智能酒店搜索平台</p>
+        </div>
+        
+        <div class="content">
+            <!-- 日本酒店统计 -->
+            <div class="japan-stats">
+                <div class="stat-card">
+                    <div class="stat-number">35</div>
+                    <div class="stat-label">酒店总数</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number">15</div>
+                    <div class="stat-label">覆盖城市</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number">8</div>
+                    <div class="stat-label">酒店品牌</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number">¥6K-70K</div>
+                    <div class="stat-label">价格范围</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number">3-5</div>
+                    <div class="stat-label">星级范围</div>
+                </div>
+            </div>
+            
+            <!-- 标签页 -->
+            <div class="tabs">
+                <button class="tab active" onclick="switchTab('search')">🔍 智能搜索</button>
+                <button class="tab" onclick="switchTab('cities')">🏙️ 城市浏览</button>
+                <button class="tab" onclick="switchTab('brands')">🏨 品牌搜索</button>
+            </div>
+            
+            <!-- 智能搜索 -->
+            <div id="search-tab" class="tab-content active">
+                <div class="search-section">
+                    <h2>🔍 日本酒店智能搜索</h2>
+                    <p>支持城市名、地区名、酒店品牌、价格范围等多种搜索方式</p>
+                    
+                    <div class="search-box">
+                        <input type="text" id="searchInput" class="search-input" 
+                               placeholder="输入城市名、地区名或酒店品牌..." onkeyup="searchHotels()">
+                        <button class="search-button" onclick="searchHotels()">搜索酒店</button>
+                    </div>
+                    
+                    <!-- 快速搜索 -->
+                    <div class="quick-search">
+                        <div class="quick-search-section">
+                            <h3>🏙️ 热门城市</h3>
+                            <div class="quick-buttons">
+                                <button class="quick-btn" onclick="quickSearch('东京')">东京</button>
+                                <button class="quick-btn" onclick="quickSearch('大阪')">大阪</button>
+                                <button class="quick-btn" onclick="quickSearch('京都')">京都</button>
+                                <button class="quick-btn" onclick="quickSearch('横滨')">横滨</button>
+                                <button class="quick-btn" onclick="quickSearch('名古屋')">名古屋</button>
+                                <button class="quick-btn" onclick="quickSearch('神户')">神户</button>
+                            </div>
+                        </div>
+                        
+                        <div class="quick-search-section">
+                            <h3>🏨 酒店品牌</h3>
+                            <div class="quick-buttons">
+                                <button class="quick-btn" onclick="quickSearch('威斯汀')">威斯汀</button>
+                                <button class="quick-btn" onclick="quickSearch('王子')">王子</button>
+                                <button class="quick-btn" onclick="quickSearch('三井花园')">三井花园</button>
+                                <button class="quick-btn" onclick="quickSearch('MYSTAYS')">MYSTAYS</button>
+                            </div>
+                        </div>
+                        
+                        <div class="quick-search-section">
+                            <h3>💰 价格范围</h3>
+                            <div class="quick-buttons">
+                                <button class="quick-btn" onclick="quickSearch('经济')">经济型</button>
+                                <button class="quick-btn" onclick="quickSearch('商务')">商务型</button>
+                                <button class="quick-btn" onclick="quickSearch('豪华')">豪华型</button>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div id="searchResults" class="results"></div>
+                </div>
+            </div>
+            
+            <!-- 城市浏览 -->
+            <div id="cities-tab" class="tab-content">
+                <div class="search-section">
+                    <h2>🏙️ 日本主要城市</h2>
+                    <p>点击城市卡片查看该城市的酒店信息</p>
+                    
+                    <div class="city-grid">
+                        <div class="city-card" onclick="searchByCity('东京')">
+                            <div class="city-name">东京</div>
+                            <div class="city-info">10家酒店<br>¥6,000-35,000</div>
+                        </div>
+                        <div class="city-card" onclick="searchByCity('大阪')">
+                            <div class="city-name">大阪</div>
+                            <div class="city-info">5家酒店<br>¥6,000-70,000</div>
+                        </div>
+                        <div class="city-card" onclick="searchByCity('京都')">
+                            <div class="city-name">京都</div>
+                            <div class="city-info">5家酒店<br>¥10,000-50,000</div>
+                        </div>
+                        <div class="city-card" onclick="searchByCity('横滨')">
+                            <div class="city-name">横滨</div>
+                            <div class="city-info">3家酒店<br>¥7,000-40,000</div>
+                        </div>
+                        <div class="city-card" onclick="searchByCity('名古屋')">
+                            <div class="city-name">名古屋</div>
+                            <div class="city-info">3家酒店<br>¥9,000-35,000</div>
+                        </div>
+                        <div class="city-card" onclick="searchByCity('神户')">
+                            <div class="city-name">神户</div>
+                            <div class="city-info">3家酒店<br>¥8,000-50,000</div>
+                        </div>
+                        <div class="city-card" onclick="searchByCity('福冈')">
+                            <div class="city-name">福冈</div>
+                            <div class="city-info">3家酒店<br>¥8,000-30,000</div>
+                        </div>
+                        <div class="city-card" onclick="searchByCity('札幌')">
+                            <div class="city-name">札幌</div>
+                            <div class="city-info">3家酒店<br>¥8,000-25,000</div>
+                        </div>
+                    </div>
+                    
+                    <div id="cityResults" class="results"></div>
+                </div>
+            </div>
+            
+            <!-- 品牌搜索 -->
+            <div id="brands-tab" class="tab-content">
+                <div class="search-section">
+                    <h2>🏨 酒店品牌搜索</h2>
+                    <p>按酒店品牌搜索，找到您信赖的酒店品牌</p>
+                    
+                    <div class="quick-search">
+                        <div class="quick-search-section">
+                            <h3>🌟 国际品牌</h3>
+                            <div class="quick-buttons">
+                                <button class="quick-btn" onclick="searchByBrand('威斯汀')">威斯汀</button>
+                                <button class="quick-btn" onclick="searchByBrand('王子')">王子</button>
+                                <button class="quick-btn" onclick="searchByBrand('丽思卡尔顿')">丽思卡尔顿</button>
+                            </div>
+                        </div>
+                        
+                        <div class="quick-search-section">
+                            <h3>🇯🇵 日本品牌</h3>
+                            <div class="quick-buttons">
+                                <button class="quick-btn" onclick="searchByBrand('三井花园')">三井花园</button>
+                                <button class="quick-btn" onclick="searchByBrand('MYSTAYS')">MYSTAYS</button>
+                                <button class="quick-btn" onclick="searchByBrand('利夫马克斯')">利夫马克斯</button>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div id="brandResults" class="results"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // 日本酒店数据
+        const japanHotels = [
+            // 东京酒店
+            {id: "994914", nameCn: "新宿华盛顿酒店", nameEn: "Shinjuku Washington Hotel", nameJp: "新宿ワシントンホテル", 
+             cityCn: "东京", cityEn: "Tokyo", cityJp: "東京", region: "新宿地区", address: "东京都新宿区歌舞伎町1-30-1", 
+             country: "Japan", searchCount: 1000, priceRange: "¥8,000-15,000", starRating: 3},
+            {id: "25457196", nameCn: "利夫马克斯酒店-东京大冢站前店", nameEn: "HOTEL LiVEMAX Tokyo Otsuka-Ekimae", nameJp: "ホテルリブマックス東京大塚駅前", 
+             cityCn: "东京", cityEn: "Tokyo", cityJp: "東京", region: "池袋地区", address: "东京都丰岛区大冢1-1-1", 
+             country: "Japan", searchCount: 800, priceRange: "¥6,000-12,000", starRating: 3},
+            {id: "104430812", nameCn: "东京秋叶原N+酒店", nameEn: "N+HOTEL Akihabara", nameJp: "N+ホテル秋葉原", 
+             cityCn: "东京", cityEn: "Tokyo", cityJp: "東京", region: "秋叶原地区", address: "东京都千代田区外神田1-1-1", 
+             country: "Japan", searchCount: 1200, priceRange: "¥7,000-14,000", starRating: 3},
+            {id: "45586346", nameCn: "浅草吉居酒店·琢居", nameEn: "Asakusa YOSHII Hotel", nameJp: "浅草吉居ホテル・琢居", 
+             cityCn: "东京", cityEn: "Tokyo", cityJp: "東京", region: "上野/浅草地区", address: "东京都台东区浅草1-1-1", 
+             country: "Japan", searchCount: 900, priceRange: "¥9,000-18,000", starRating: 4},
+            {id: "688061", nameCn: "MYSTAYS 上野入谷口酒店", nameEn: "HOTEL MYSTAYS Ueno Iriyaguchi", nameJp: "ホテルマイステイズ上野入谷口", 
+             cityCn: "东京", cityEn: "Tokyo", cityJp: "東京", region: "上野/浅草地区", address: "东京都台东区上野1-1-1", 
+             country: "Japan", searchCount: 1100, priceRange: "¥8,000-16,000", starRating: 3},
+            {id: "品川王子大酒店东塔", nameCn: "品川王子大酒店东塔", nameEn: "Shinagawa Prince Hotel East Tower", nameJp: "品川プリンスホテルイーストタワー", 
+             cityCn: "东京", cityEn: "Tokyo", cityJp: "東京", region: "品川地区", address: "东京都港区高轮4-10-30", 
+             country: "Japan", searchCount: 1500, priceRange: "¥15,000-30,000", starRating: 4},
+            {id: "东京日本桥N+酒店", nameCn: "东京日本桥N+酒店", nameEn: "Nplus Hotel Tokyo Nihonbashi", nameJp: "Nプラスホテル東京日本橋", 
+             cityCn: "东京", cityEn: "Tokyo", cityJp: "東京", region: "东京站/日本桥地区", address: "东京都中央区日本桥1-1-1", 
+             country: "Japan", searchCount: 1300, priceRange: "¥12,000-25,000", starRating: 4},
+            {id: "日暮里 阿尔蒙特酒店", nameCn: "日暮里 阿尔蒙特酒店", nameEn: "Almont Hotel Nippori", nameJp: "アルモントホテル日暮里", 
+             cityCn: "东京", cityEn: "Tokyo", cityJp: "東京", region: "上野/浅草地区", address: "东京都荒川区西日暮里1-1-1", 
+             country: "Japan", searchCount: 700, priceRange: "¥6,000-12,000", starRating: 3},
+            {id: "东京秋叶原N+酒店(2号店)", nameCn: "东京秋叶原N+酒店(2号店)", nameEn: "N+HOTEL Akihabara No.2", nameJp: "N+ホテル秋葉原2号店", 
+             cityCn: "东京", cityEn: "Tokyo", cityJp: "東京", region: "东京站/日本桥地区", address: "东京都千代田区外神田2-2-2", 
+             country: "Japan", searchCount: 1000, priceRange: "¥7,000-14,000", starRating: 3},
+            {id: "三井花园酒店银座筑地", nameCn: "三井花园酒店银座筑地", nameEn: "Mitsui Garden Hotel Ginza Tsukiji", nameJp: "三井ガーデンホテル銀座築地", 
+             cityCn: "东京", cityEn: "Tokyo", cityJp: "東京", region: "银座/筑地地区", address: "东京都中央区筑地1-1-1", 
+             country: "Japan", searchCount: 1400, priceRange: "¥18,000-35,000", starRating: 4},
+            
+            // 大阪酒店
+            {id: "大阪威斯汀酒店", nameCn: "大阪威斯汀酒店", nameEn: "The Westin Osaka", nameJp: "ウェスティンホテル大阪", 
+             cityCn: "大阪", cityEn: "Osaka", cityJp: "大阪", region: "梅田地区", address: "大阪府大阪市北区梅田1-1-1", 
+             country: "Japan", searchCount: 1600, priceRange: "¥20,000-40,000", starRating: 5},
+            {id: "大阪丽思卡尔顿酒店", nameCn: "大阪丽思卡尔顿酒店", nameEn: "The Ritz-Carlton Osaka", nameJp: "ザ・リッツ・カールトン大阪", 
+             cityCn: "大阪", cityEn: "Osaka", cityJp: "大阪", region: "梅田地区", address: "大阪府大阪市北区梅田2-2-2", 
+             country: "Japan", searchCount: 1800, priceRange: "¥35,000-70,000", starRating: 5},
+            {id: "大阪难波东方酒店", nameCn: "大阪难波东方酒店", nameEn: "Hotel Oriental Express Osaka Namba", nameJp: "ホテルオリエンタルエクスプレス大阪難波", 
+             cityCn: "大阪", cityEn: "Osaka", cityJp: "大阪", region: "难波地区", address: "大阪府大阪市中央区难波3-3-3", 
+             country: "Japan", searchCount: 1200, priceRange: "¥8,000-16,000", starRating: 3},
+            {id: "大阪心斋桥酒店", nameCn: "大阪心斋桥酒店", nameEn: "Hotel Shinsaibashi Osaka", nameJp: "ホテル心斎橋大阪", 
+             cityCn: "大阪", cityEn: "Osaka", cityJp: "大阪", region: "心斋桥地区", address: "大阪府大阪市中央区心斋桥4-4-4", 
+             country: "Japan", searchCount: 1100, priceRange: "¥7,000-14,000", starRating: 3},
+            {id: "大阪天王寺酒店", nameCn: "大阪天王寺酒店", nameEn: "Hotel Tennoji Osaka", nameJp: "ホテル天王寺大阪", 
+             cityCn: "大阪", cityEn: "Osaka", cityJp: "大阪", region: "天王寺地区", address: "大阪府大阪市天王寺区天王寺5-5-5", 
+             country: "Japan", searchCount: 900, priceRange: "¥6,000-12,000", starRating: 3},
+            
+            // 京都酒店
+            {id: "京都威斯汀都酒店", nameCn: "京都威斯汀都酒店", nameEn: "The Westin Miyako Kyoto", nameJp: "ウェスティンホテル都京都", 
+             cityCn: "京都", cityEn: "Kyoto", cityJp: "京都", region: "东山地区", address: "京都府京都市东山区粟田口华顶町1-1-1", 
+             country: "Japan", searchCount: 1700, priceRange: "¥25,000-50,000", starRating: 5},
+            {id: "京都四条乌丸酒店", nameCn: "京都四条乌丸酒店", nameEn: "Hotel Shijo Karasuma Kyoto", nameJp: "ホテル四条烏丸京都", 
+             cityCn: "京都", cityEn: "Kyoto", cityJp: "京都", region: "四条地区", address: "京都府京都市下京区四条通乌丸东入6-6-6", 
+             country: "Japan", searchCount: 1300, priceRange: "¥10,000-20,000", starRating: 4},
+            {id: "京都祗园酒店", nameCn: "京都祗园酒店", nameEn: "Hotel Gion Kyoto", nameJp: "ホテル祇園京都", 
+             cityCn: "京都", cityEn: "Kyoto", cityJp: "京都", region: "祗园地区", address: "京都府京都市东山区祗园町7-7-7", 
+             country: "Japan", searchCount: 1400, priceRange: "¥15,000-30,000", starRating: 4},
+            {id: "京都清水寺酒店", nameCn: "京都清水寺酒店", nameEn: "Hotel Kiyomizu Kyoto", nameJp: "ホテル清水寺京都", 
+             cityCn: "京都", cityEn: "Kyoto", cityJp: "京都", region: "清水寺地区", address: "京都府京都市东山区清水8-8-8", 
+             country: "Japan", searchCount: 1200, priceRange: "¥12,000-25,000", starRating: 4},
+            {id: "京都岚山酒店", nameCn: "京都岚山酒店", nameEn: "Hotel Arashiyama Kyoto", nameJp: "ホテル嵐山京都", 
+             cityCn: "京都", cityEn: "Kyoto", cityJp: "京都", region: "岚山地区", address: "京都府京都市右京区岚山9-9-9", 
+             country: "Japan", searchCount: 1100, priceRange: "¥18,000-35,000", starRating: 4},
+            
+            // 其他城市酒店（简化版）
+            {id: "横滨皇家花园酒店", nameCn: "横滨皇家花园酒店", nameEn: "Yokohama Royal Park Hotel", nameJp: "横浜ロイヤルパークホテル", 
+             cityCn: "横滨", cityEn: "Yokohama", cityJp: "横浜", region: "港未来地区", address: "神奈川县横滨市西区港未来2-2-1", 
+             country: "Japan", searchCount: 1300, priceRange: "¥20,000-40,000", starRating: 5},
+            {id: "名古屋威斯汀城堡酒店", nameCn: "名古屋威斯汀城堡酒店", nameEn: "The Westin Nagoya Castle", nameJp: "ウェスティンホテル名古屋キャッスル", 
+             cityCn: "名古屋", cityEn: "Nagoya", cityJp: "名古屋", region: "荣地区", address: "爱知县名古屋市中区荣5-5-5", 
+             country: "Japan", searchCount: 1400, priceRange: "¥18,000-35,000", starRating: 5},
+            {id: "神户美利坚公园东方酒店", nameCn: "神户美利坚公园东方酒店", nameEn: "Kobe Meriken Park Oriental Hotel", nameJp: "神戸メリケンパークオリエンタルホテル", 
+             cityCn: "神户", cityEn: "Kobe", cityJp: "神戸", region: "港地区", address: "兵库县神户市中央区港岛8-8-8", 
+             country: "Japan", searchCount: 1500, priceRange: "¥25,000-50,000", starRating: 5},
+            {id: "福冈博多酒店", nameCn: "福冈博多酒店", nameEn: "Hotel Hakata Fukuoka", nameJp: "ホテル博多福岡", 
+             cityCn: "福冈", cityEn: "Fukuoka", cityJp: "福岡", region: "博多地区", address: "福冈县福冈市博多区博多站前11-11-11", 
+             country: "Japan", searchCount: 1300, priceRange: "¥10,000-20,000", starRating: 4},
+            {id: "札幌大通酒店", nameCn: "札幌大通酒店", nameEn: "Hotel Odori Sapporo", nameJp: "ホテル大通札幌", 
+             cityCn: "札幌", cityEn: "Sapporo", cityJp: "札幌", region: "大通地区", address: "北海道札幌市中央区大通西14-14-14", 
+             country: "Japan", searchCount: 1200, priceRange: "¥12,000-25,000", starRating: 4}
+        ];
+        
+        // 搜索功能
+        function searchHotels() {
+            const query = document.getElementById('searchInput').value.trim();
+            if (!query) {
+                document.getElementById('searchResults').innerHTML = '';
+                return;
+            }
+            
+            const results = japanHotels.filter(hotel => {
+                const searchText = query.toLowerCase();
+                return hotel.nameCn.toLowerCase().includes(searchText) ||
+                       hotel.nameEn.toLowerCase().includes(searchText) ||
+                       hotel.cityCn.toLowerCase().includes(searchText) ||
+                       hotel.cityEn.toLowerCase().includes(searchText) ||
+                       hotel.region.toLowerCase().includes(searchText) ||
+                       hotel.priceRange.toLowerCase().includes(searchText);
+            });
+            
+            displayResults(results, 'searchResults');
+        }
+        
+        // 快速搜索
+        function quickSearch(query) {
+            document.getElementById('searchInput').value = query;
+            searchHotels();
+        }
+        
+        // 按城市搜索
+        function searchByCity(city) {
+            const results = japanHotels.filter(hotel => 
+                hotel.cityCn === city || hotel.cityEn === city
+            );
+            displayResults(results, 'cityResults');
+        }
+        
+        // 按品牌搜索
+        function searchByBrand(brand) {
+            const results = japanHotels.filter(hotel => 
+                hotel.nameCn.includes(brand) || hotel.nameEn.includes(brand)
+            );
+            displayResults(results, 'brandResults');
+        }
+        
+        // 显示结果
+        function displayResults(hotels, containerId) {
+            const container = document.getElementById(containerId);
+            
+            if (hotels.length === 0) {
+                container.innerHTML = '<div class="loading">没有找到相关酒店</div>';
+                return;
+            }
+            
+            let html = `<div class="result-details">找到 ${hotels.length} 家酒店</div>`;
+            
+            hotels.forEach(hotel => {
+                const stars = '★'.repeat(hotel.starRating);
+                html += `
+                    <div class="result-item">
+                        <div class="result-header">
+                            <div class="result-title">${hotel.nameCn} (${hotel.nameEn})</div>
+                            <div class="result-price">${hotel.priceRange}</div>
+                        </div>
+                        <div class="result-details">
+                            城市: ${hotel.cityCn} (${hotel.cityEn}) | 区域: ${hotel.region}<br>
+                            地址: ${hotel.address}<br>
+                            搜索热度: ${hotel.searchCount}
+                        </div>
+                        <div class="result-stars">${stars}</div>
+                    </div>
+                `;
+            });
+            
+            container.innerHTML = html;
+        }
+        
+        // 标签页切换
+        function switchTab(tabName) {
+            document.querySelectorAll('.tab-content').forEach(content => {
+                content.classList.remove('active');
+            });
+            
+            document.querySelectorAll('.tab').forEach(tab => {
+                tab.classList.remove('active');
+            });
+            
+            document.getElementById(tabName + '-tab').classList.add('active');
+            event.target.classList.add('active');
+        }
+        
+        // 页面加载完成后的初始化
+        document.addEventListener('DOMContentLoaded', function() {
+            // 自动触发一次搜索演示
+            document.getElementById('searchInput').value = '东京';
+            searchHotels();
+        });
+    </script>
+</body>
+</html> 

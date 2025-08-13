@@ -1,0 +1,655 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>酒店搜索系统演示</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+            overflow: hidden;
+        }
+        
+        .header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 40px;
+            text-align: center;
+        }
+        
+        .header h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+            font-weight: 300;
+        }
+        
+        .header p {
+            font-size: 1.2em;
+            opacity: 0.9;
+        }
+        
+        .content {
+            padding: 40px;
+        }
+        
+        .search-section {
+            margin-bottom: 40px;
+            background: #f8f9fa;
+            border-radius: 15px;
+            padding: 30px;
+        }
+        
+        .search-section h2 {
+            color: #333;
+            margin-bottom: 20px;
+            font-size: 1.5em;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .search-box {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+        
+        .search-input {
+            flex: 1;
+            min-width: 300px;
+            padding: 15px 20px;
+            border: 2px solid #e9ecef;
+            border-radius: 10px;
+            font-size: 16px;
+            transition: all 0.3s ease;
+        }
+        
+        .search-input:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+        
+        .search-button {
+            padding: 15px 30px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-size: 16px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            white-space: nowrap;
+        }
+        
+        .search-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(102, 126, 234, 0.3);
+        }
+        
+        .results {
+            margin-top: 20px;
+        }
+        
+        .result-item {
+            background: white;
+            border: 1px solid #e9ecef;
+            border-radius: 10px;
+            padding: 20px;
+            margin-bottom: 15px;
+            transition: all 0.3s ease;
+        }
+        
+        .result-item:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+        }
+        
+        .result-title {
+            font-weight: bold;
+            color: #333;
+            margin-bottom: 8px;
+            font-size: 1.1em;
+        }
+        
+        .result-details {
+            color: #666;
+            font-size: 14px;
+            line-height: 1.5;
+        }
+        
+        .loading {
+            text-align: center;
+            color: #666;
+            font-style: italic;
+            padding: 20px;
+        }
+        
+        .error {
+            color: #dc3545;
+            padding: 15px;
+            background-color: #f8d7da;
+            border-radius: 10px;
+            margin-top: 10px;
+        }
+        
+        .stats {
+            display: flex;
+            gap: 20px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+        
+        .stat-item {
+            background: white;
+            padding: 15px 20px;
+            border-radius: 10px;
+            border: 1px solid #e9ecef;
+            flex: 1;
+            min-width: 150px;
+            text-align: center;
+        }
+        
+        .stat-number {
+            font-size: 1.5em;
+            font-weight: bold;
+            color: #667eea;
+        }
+        
+        .stat-label {
+            color: #666;
+            font-size: 14px;
+            margin-top: 5px;
+        }
+        
+        .demo-data {
+            background: #e3f2fd;
+            border-radius: 10px;
+            padding: 20px;
+            margin-bottom: 30px;
+        }
+        
+        .demo-data h3 {
+            color: #1976d2;
+            margin-bottom: 15px;
+        }
+        
+        .demo-queries {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+        
+        .demo-query {
+            background: #1976d2;
+            color: white;
+            padding: 8px 15px;
+            border-radius: 20px;
+            font-size: 14px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .demo-query:hover {
+            background: #1565c0;
+            transform: translateY(-1px);
+        }
+        
+        .tabs {
+            display: flex;
+            margin-bottom: 20px;
+            border-bottom: 2px solid #e9ecef;
+        }
+        
+        .tab {
+            padding: 15px 30px;
+            background: none;
+            border: none;
+            cursor: pointer;
+            font-size: 16px;
+            color: #666;
+            transition: all 0.3s ease;
+            border-bottom: 3px solid transparent;
+        }
+        
+        .tab.active {
+            color: #667eea;
+            border-bottom-color: #667eea;
+        }
+        
+        .tab-content {
+            display: none;
+        }
+        
+        .tab-content.active {
+            display: block;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🏨 酒店搜索系统</h1>
+            <p>基于 coach_global_search 架构的智能酒店搜索平台</p>
+        </div>
+        
+        <div class="content">
+            <!-- 演示数据 -->
+            <div class="demo-data">
+                <h3>🎯 演示数据</h3>
+                <p>系统包含10个东京地区的酒店数据，支持中英文搜索。点击以下关键词快速测试：</p>
+                <div class="demo-queries">
+                    <span class="demo-query" onclick="testQuery('东京')">东京</span>
+                    <span class="demo-query" onclick="testQuery('新宿')">新宿</span>
+                    <span class="demo-query" onclick="testQuery('秋叶原')">秋叶原</span>
+                    <span class="demo-query" onclick="testQuery('上野')">上野</span>
+                    <span class="demo-query" onclick="testQuery('银座')">银座</span>
+                    <span class="demo-query" onclick="testQuery('tokyo')">Tokyo</span>
+                    <span class="demo-query" onclick="testQuery('shinjuku')">Shinjuku</span>
+                    <span class="demo-query" onclick="testQuery('akihabara')">Akihabara</span>
+                </div>
+            </div>
+            
+            <!-- 标签页 -->
+            <div class="tabs">
+                <button class="tab active" onclick="switchTab('suggest')">🔍 建议搜索</button>
+                <button class="tab" onclick="switchTab('search')">🔎 全文搜索</button>
+            </div>
+            
+            <!-- 建议搜索 -->
+            <div id="suggest-tab" class="tab-content active">
+                <div class="search-section">
+                    <h2>🔍 酒店建议搜索</h2>
+                    <p>输入酒店名称、城市或区域，获取智能建议</p>
+                    
+                    <div class="search-box">
+                        <input type="text" id="suggestInput" class="search-input" 
+                               placeholder="输入酒店名称、城市或区域..." onkeyup="suggestHotels()">
+                        <button class="search-button" onclick="suggestHotels()">搜索建议</button>
+                    </div>
+                    
+                    <div id="suggestResults" class="results"></div>
+                </div>
+            </div>
+            
+            <!-- 全文搜索 -->
+            <div id="search-tab" class="tab-content">
+                <div class="search-section">
+                    <h2>🔎 酒店全文搜索</h2>
+                    <p>全文搜索酒店信息，支持模糊匹配</p>
+                    
+                    <div class="search-box">
+                        <input type="text" id="searchInput" class="search-input" 
+                               placeholder="输入搜索关键词...">
+                        <button class="search-button" onclick="searchHotels()">搜索酒店</button>
+                    </div>
+                    
+                    <div id="searchResults" class="results"></div>
+                </div>
+            </div>
+            
+            <!-- 系统统计 -->
+            <div class="stats">
+                <div class="stat-item">
+                    <div class="stat-number" id="totalHotels">10</div>
+                    <div class="stat-label">酒店总数</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-number" id="totalSearches">0</div>
+                    <div class="stat-label">搜索次数</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-number" id="avgResponseTime">0</div>
+                    <div class="stat-label">平均响应时间(ms)</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-number" id="successRate">100</div>
+                    <div class="stat-label">成功率(%)</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let suggestTimeout;
+        let searchCount = 0;
+        let totalResponseTime = 0;
+        let successCount = 0;
+        
+        // 模拟API服务器
+        const mockServer = {
+            hotels: [
+                {id: "994914", nameCn: "新宿华盛顿酒店", nameEn: "Shinjuku Washington Hotel", 
+                 cityCn: "东京", cityEn: "Tokyo", region: "新宿地区", address: "东京都新宿区歌舞伎町1-30-1", 
+                 country: "Japan", searchCount: 1000},
+                {id: "25457196", nameCn: "利夫马克斯酒店-东京大冢站前店", nameEn: "HOTEL LiVEMAX Tokyo Otsuka-Ekimae", 
+                 cityCn: "东京", cityEn: "Tokyo", region: "池袋地区", address: "东京都丰岛区大冢1-1-1", 
+                 country: "Japan", searchCount: 800},
+                {id: "104430812", nameCn: "东京秋叶原N+酒店", nameEn: "N+HOTEL Akihabara", 
+                 cityCn: "东京", cityEn: "Tokyo", region: "秋叶原地区", address: "东京都千代田区外神田1-1-1", 
+                 country: "Japan", searchCount: 1200},
+                {id: "45586346", nameCn: "浅草吉居酒店·琢居", nameEn: "Asakusa YOSHII Hotel", 
+                 cityCn: "东京", cityEn: "Tokyo", region: "上野/浅草地区", address: "东京都台东区浅草1-1-1", 
+                 country: "Japan", searchCount: 900},
+                {id: "688061", nameCn: "MYSTAYS 上野入谷口酒店", nameEn: "HOTEL MYSTAYS Ueno Iriyaguchi", 
+                 cityCn: "东京", cityEn: "Tokyo", region: "上野/浅草地区", address: "东京都台东区上野1-1-1", 
+                 country: "Japan", searchCount: 1100},
+                {id: "品川王子大酒店东塔", nameCn: "品川王子大酒店东塔", nameEn: "Shinagawa Prince Hotel East Tower", 
+                 cityCn: "东京", cityEn: "Tokyo", region: "品川地区", address: "东京都港区高轮4-10-30", 
+                 country: "Japan", searchCount: 1500},
+                {id: "东京日本桥N+酒店", nameCn: "东京日本桥N+酒店", nameEn: "Nplus Hotel Tokyo Nihonbashi", 
+                 cityCn: "东京", cityEn: "Tokyo", region: "东京站/日本桥地区", address: "东京都中央区日本桥1-1-1", 
+                 country: "Japan", searchCount: 1300},
+                {id: "日暮里 阿尔蒙特酒店", nameCn: "日暮里 阿尔蒙特酒店", nameEn: "Almont Hotel Nippori", 
+                 cityCn: "东京", cityEn: "Tokyo", region: "上野/浅草地区", address: "东京都荒川区西日暮里1-1-1", 
+                 country: "Japan", searchCount: 700},
+                {id: "东京秋叶原N+酒店(2号店)", nameCn: "东京秋叶原N+酒店(2号店)", nameEn: "N+HOTEL Akihabara No.2", 
+                 cityCn: "东京", cityEn: "Tokyo", region: "东京站/日本桥地区", address: "东京都千代田区外神田2-2-2", 
+                 country: "Japan", searchCount: 1000},
+                {id: "三井花园酒店银座筑地", nameCn: "三井花园酒店银座筑地", nameEn: "Mitsui Garden Hotel Ginza Tsukiji", 
+                 cityCn: "东京", cityEn: "Tokyo", region: "银座/筑地地区", address: "东京都中央区筑地1-1-1", 
+                 country: "Japan", searchCount: 1400}
+            ],
+            
+            suggest(query, count = 10) {
+                const startTime = Date.now();
+                const results = [];
+                
+                const normalizedQuery = query.toLowerCase().trim();
+                
+                for (const hotel of this.hotels) {
+                    const score = this.calculateSuggestScore(hotel, normalizedQuery);
+                    if (score > 0) {
+                        results.push({...hotel, score});
+                    }
+                }
+                
+                results.sort((a, b) => b.score - a.score);
+                
+                const responseTime = Date.now() - startTime;
+                this.updateStats(true, responseTime);
+                
+                return {
+                    success: true,
+                    data: results.slice(0, count).map(hotel => ({
+                        displayName: `${hotel.nameCn} (${hotel.country})`,
+                        hotelName: hotel.nameCn,
+                        cityName: hotel.cityCn,
+                        regionName: hotel.region,
+                        country: hotel.country,
+                        hotelId: hotel.id
+                    }))
+                };
+            },
+            
+            search(query, page = 1, pageSize = 20) {
+                const startTime = Date.now();
+                const results = [];
+                
+                const normalizedQuery = query.toLowerCase().trim();
+                
+                for (const hotel of this.hotels) {
+                    const score = this.calculateSearchScore(hotel, normalizedQuery);
+                    if (score > 0) {
+                        results.push({...hotel, score});
+                    }
+                }
+                
+                results.sort((a, b) => b.score - a.score);
+                
+                const start = (page - 1) * pageSize;
+                const end = start + pageSize;
+                const pageResults = results.slice(start, end);
+                
+                const responseTime = Date.now() - startTime;
+                this.updateStats(true, responseTime);
+                
+                return {
+                    success: true,
+                    data: {
+                        hotels: pageResults.map(hotel => ({
+                            hotelId: hotel.id,
+                            hotelNameCn: hotel.nameCn,
+                            hotelNameEn: hotel.nameEn,
+                            cityNameCn: hotel.cityCn,
+                            cityNameEn: hotel.cityEn,
+                            regionName: hotel.region,
+                            address: hotel.address,
+                            country: hotel.country,
+                            searchCount: hotel.searchCount
+                        })),
+                        totalCount: results.length,
+                        page: page,
+                        pageSize: pageSize,
+                        totalPages: Math.ceil(results.length / pageSize)
+                    }
+                };
+            },
+            
+            calculateSuggestScore(hotel, query) {
+                let score = 0;
+                
+                // 精确匹配
+                if (hotel.nameCn.toLowerCase().includes(query) || 
+                    hotel.nameEn.toLowerCase().includes(query) ||
+                    hotel.cityCn.toLowerCase().includes(query) ||
+                    hotel.cityEn.toLowerCase().includes(query) ||
+                    hotel.region.toLowerCase().includes(query)) {
+                    score += 10;
+                }
+                
+                // 搜索热度
+                score += Math.log(hotel.searchCount + 1) * 0.2;
+                
+                // 编辑距离
+                const distanceScores = [
+                    this.editDistance(hotel.nameCn, query),
+                    this.editDistance(hotel.nameEn, query),
+                    this.editDistance(hotel.cityCn, query),
+                    this.editDistance(hotel.cityEn, query),
+                    this.editDistance(hotel.region, query)
+                ];
+                score += Math.max(...distanceScores) * 0.6;
+                
+                return score;
+            },
+            
+            calculateSearchScore(hotel, query) {
+                let score = 0;
+                
+                const fields = [
+                    hotel.nameCn, hotel.nameEn, hotel.cityCn, 
+                    hotel.cityEn, hotel.region, hotel.address
+                ];
+                
+                for (const field of fields) {
+                    if (field.toLowerCase().includes(query)) {
+                        score += 1;
+                    }
+                    score += this.editDistance(field, query) * 0.5;
+                }
+                
+                return score;
+            },
+            
+            editDistance(str1, str2) {
+                const len1 = str1.length;
+                const len2 = str2.length;
+                const matrix = Array(len1 + 1).fill().map(() => Array(len2 + 1).fill(0));
+                
+                for (let i = 0; i <= len1; i++) matrix[i][0] = i;
+                for (let j = 0; j <= len2; j++) matrix[0][j] = j;
+                
+                for (let i = 1; i <= len1; i++) {
+                    for (let j = 1; j <= len2; j++) {
+                        const cost = str1[i-1] === str2[j-1] ? 0 : 1;
+                        matrix[i][j] = Math.min(
+                            matrix[i-1][j] + 1,
+                            matrix[i][j-1] + 1,
+                            matrix[i-1][j-1] + cost
+                        );
+                    }
+                }
+                
+                const distance = matrix[len1][len2];
+                const maxLen = Math.max(len1, len2);
+                return maxLen === 0 ? 1 : 1 - distance / maxLen;
+            },
+            
+            updateStats(success, responseTime) {
+                searchCount++;
+                totalResponseTime += responseTime;
+                if (success) successCount++;
+                
+                document.getElementById('totalSearches').textContent = searchCount;
+                document.getElementById('avgResponseTime').textContent = 
+                    Math.round(totalResponseTime / searchCount);
+                document.getElementById('successRate').textContent = 
+                    Math.round(successCount / searchCount * 100);
+            }
+        };
+        
+        // 建议搜索
+        function suggestHotels() {
+            const query = document.getElementById('suggestInput').value.trim();
+            if (!query) {
+                document.getElementById('suggestResults').innerHTML = '';
+                return;
+            }
+            
+            clearTimeout(suggestTimeout);
+            suggestTimeout = setTimeout(() => {
+                const resultsDiv = document.getElementById('suggestResults');
+                resultsDiv.innerHTML = '<div class="loading">搜索中...</div>';
+                
+                setTimeout(() => {
+                    const response = mockServer.suggest(query, 10);
+                    displaySuggestions(response.data);
+                }, 300);
+            }, 300);
+        }
+        
+        function displaySuggestions(suggestions) {
+            const resultsDiv = document.getElementById('suggestResults');
+            
+            if (suggestions.length === 0) {
+                resultsDiv.innerHTML = '<div class="loading">没有找到相关建议</div>';
+                return;
+            }
+            
+            let html = '';
+            suggestions.forEach(suggestion => {
+                html += `
+                    <div class="result-item">
+                        <div class="result-title">${suggestion.displayName}</div>
+                        <div class="result-details">
+                            酒店: ${suggestion.hotelName}<br>
+                            城市: ${suggestion.cityName} | 区域: ${suggestion.regionName} | 国家: ${suggestion.country}
+                        </div>
+                    </div>
+                `;
+            });
+            
+            resultsDiv.innerHTML = html;
+        }
+        
+        // 全文搜索
+        function searchHotels() {
+            const query = document.getElementById('searchInput').value.trim();
+            if (!query) {
+                alert('请输入搜索关键词');
+                return;
+            }
+            
+            const resultsDiv = document.getElementById('searchResults');
+            resultsDiv.innerHTML = '<div class="loading">搜索中...</div>';
+            
+            setTimeout(() => {
+                const response = mockServer.search(query, 1, 20);
+                displaySearchResults(response.data);
+            }, 300);
+        }
+        
+        function displaySearchResults(searchResult) {
+            const resultsDiv = document.getElementById('searchResults');
+            
+            if (searchResult.hotels.length === 0) {
+                resultsDiv.innerHTML = '<div class="loading">没有找到相关酒店</div>';
+                return;
+            }
+            
+            let html = `<div class="result-details">找到 ${searchResult.totalCount} 个结果，当前显示第 ${searchResult.page} 页</div>`;
+            
+            searchResult.hotels.forEach(hotel => {
+                html += `
+                    <div class="result-item">
+                        <div class="result-title">${hotel.hotelNameCn} (${hotel.hotelNameEn})</div>
+                        <div class="result-details">
+                            城市: ${hotel.cityNameCn} (${hotel.cityNameEn}) | 区域: ${hotel.regionName}<br>
+                            地址: ${hotel.address}<br>
+                            搜索热度: ${hotel.searchCount}
+                        </div>
+                    </div>
+                `;
+            });
+            
+            resultsDiv.innerHTML = html;
+        }
+        
+        // 标签页切换
+        function switchTab(tabName) {
+            // 隐藏所有标签页内容
+            document.querySelectorAll('.tab-content').forEach(content => {
+                content.classList.remove('active');
+            });
+            
+            // 移除所有标签的active类
+            document.querySelectorAll('.tab').forEach(tab => {
+                tab.classList.remove('active');
+            });
+            
+            // 显示选中的标签页
+            document.getElementById(tabName + '-tab').classList.add('active');
+            event.target.classList.add('active');
+        }
+        
+        // 快速测试查询
+        function testQuery(query) {
+            const activeTab = document.querySelector('.tab.active').textContent;
+            
+            if (activeTab.includes('建议搜索')) {
+                document.getElementById('suggestInput').value = query;
+                suggestHotels();
+            } else {
+                document.getElementById('searchInput').value = query;
+                searchHotels();
+            }
+        }
+        
+        // 页面加载完成后的初始化
+        document.addEventListener('DOMContentLoaded', function() {
+            // 自动触发一次建议搜索演示
+            document.getElementById('suggestInput').value = '东京';
+            suggestHotels();
+        });
+    </script>
+</body>
+</html> 

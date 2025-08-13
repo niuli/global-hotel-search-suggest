@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+           http://www.springframework.org/schema/beans/spring-beans.xsd
+           http://www.springframework.org/schema/context
+           http://www.springframework.org/schema/context/spring-context.xsd">
+
+    <!-- 启用注解扫描 -->
+    <context:component-scan base-package="com.qunar.hotel.search"/>
+
+    <!-- 酒店建议索引配置 -->
+    <bean id="hotelSuggestIndex" class="com.qunar.hotel.search.core.index.HotelSuggestIndex" 
+          init-method="initialize" destroy-method="close">
+        <constructor-arg ref="hotelSuggestIndexBuilder"/>
+    </bean>
+
+    <!-- 酒店搜索索引配置 -->
+    <bean id="hotelSearchIndex" class="com.qunar.hotel.search.core.index.HotelSearchIndex" 
+          init-method="initialize" destroy-method="close"/>
+
+    <!-- 酒店建议索引构建器 -->
+    <bean id="hotelSuggestIndexBuilder" class="com.qunar.hotel.search.core.index.HotelSuggestIndexBuilder"/>
+
+</beans> 
